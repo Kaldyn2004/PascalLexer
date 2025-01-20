@@ -67,6 +67,8 @@ private:
     int line = 1;
     int column = 0;
 
+    std::unordered_map<std::string, int> identifierStats;
+
     void advance() {
         if (currentChar == '\n') {
             line++;
@@ -87,7 +89,7 @@ private:
             advance();
         }
         if (pos < text.size()) {
-            advance(); // Пропустить '\n'
+            advance();
         }
     }
 
@@ -113,6 +115,7 @@ private:
     Token number() {
         Position start = {line, column};
         std::string result;
+        bool isFloat = false;
 
         while (std::isdigit(currentChar)) {
             result += currentChar;
@@ -122,14 +125,40 @@ private:
         if (currentChar == '.') {
             result += currentChar;
             advance();
+            isFloat = true;
+
+            if (!std::isdigit(currentChar)) {
+                return {Lexeme::BAD, result, start};
+            }
+
             while (std::isdigit(currentChar)) {
                 result += currentChar;
                 advance();
             }
+
+            if (currentChar == 'e' || currentChar == 'E') {
+                result += currentChar;
+                advance();
+                if (currentChar == '+' || currentChar == '-') {
+                    result += currentChar;
+                    advance();
+                }
+                if (!std::isdigit(currentChar)) {
+                    return {Lexeme::BAD, result, start};
+                }
+                while (std::isdigit(currentChar)) {
+                    result += currentChar;
+                    advance();
+                }
+            }
             return {Lexeme::FLOAT, result, start};
         }
 
-        return {Lexeme::INTEGER, result, start};
+        if (result.size() > 16) {
+            return {Lexeme::BAD, result, start};
+        }
+
+        return {isFloat ? Lexeme::FLOAT : Lexeme::INTEGER, result, start};
     }
 
     Token identifier() {
@@ -159,8 +188,8 @@ private:
     Token stringLiteral() {
         Position start = {line, column};
         std::string result;
-
         advance();
+
         while (currentChar != '\'' && currentChar != '\n' && currentChar != '\0') {
             result += currentChar;
             advance();
@@ -248,10 +277,10 @@ public:
 
             // Пропуск многострочных комментариев
             if (currentChar == '{') {
-                if (skipBlockComment()) {
-                    return nextToken();
+                if (!skipBlockComment()) {
+                    return {Lexeme::BAD, "{", {line, column}};
                 }
-                return {Lexeme::BAD, "{", {line, column}};
+                continue;
             }
 
             return operatorOrPunctuation();
@@ -265,7 +294,10 @@ public:
         Token token;
         do {
             token = nextToken();
-            tokens.push_back(token);
+               if (token.type != Lexeme::END_OF_FILE)
+               {
+                   tokens.push_back(token);
+               }
         } while (token.type != Lexeme::END_OF_FILE);
         return tokens;
     }
