@@ -1,0 +1,10 @@
+# ninja log v5
+3	834	7588106881944195	CMakeFiles/PascalLexer.dir/main.cpp.obj	7405b10fada721b2
+834	1192	7588106885478278	C:/D/avtomats/PascalLexer/bin/PascalLexer.exe	452dd5b7dc809469
+2641	4001	7581572406431096	PascalLexer.exe	b9e1988b76504734
+3	871	7588870415320296	CMakeFiles/PascalLexer.dir/main.cpp.obj	c327fcc2f12bd68
+872	1308	7588870419653654	C:/D/avtomats/PascalLexer/bin/PascalLexer.exe	51e434f6911cfc02
+3	993	7591006412364666	CMakeFiles/PascalLexer.dir/main.cpp.obj	c327fcc2f12bd68
+993	1611	7591006418507486	C:/D/avtomats/PascalLexer/bin/PascalLexer.exe	51e434f6911cfc02
+2	817	7591010824502813	CMakeFiles/PascalLexer.dir/main.cpp.obj	c327fcc2f12bd68
+821	1184	7591010828135409	C:/D/avtomats/PascalLexer/bin/PascalLexer.exe	51e434f6911cfc02

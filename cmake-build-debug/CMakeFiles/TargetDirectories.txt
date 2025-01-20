@@ -1,0 +1,3 @@
+C:/D/avtomats/PascalLexer/cmake-build-debug/CMakeFiles/PascalLexer.dir
+C:/D/avtomats/PascalLexer/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/D/avtomats/PascalLexer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
