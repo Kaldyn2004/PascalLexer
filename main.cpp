@@ -348,15 +348,15 @@ std::string lexemeToString(Lexeme type) {
     }
 }
 
-void printTokens(const std::vector<Token>& tokens) {
+void printTokenToFile(const std::vector<Token>& tokens, std::ofstream& out) {
     for (const auto& token : tokens) {
-        std::cout <<  lexemeToString(token.type) << " (" << token.position.line << ", " << token.position.column << ") \""<< token.lexeme << "\"" << std::endl;
+         out <<  lexemeToString(token.type) << " (" << token.position.line << ", " << token.position.column << ") \""<< token.lexeme << "\"" << std::endl;
     }
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: lexer <input_file>" << std::endl;
+    if (argc < 3) {
+        std::cerr << "Usage: lexer <input_file> <output.tok>" << std::endl;
         return 1;
     }
 
@@ -366,10 +366,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    std::ofstream outputFile(argv[2]);
+    if (!inputFile) {
+        std::cerr << "Error: Cannot open file " << argv[2] << std::endl;
+        return 1;
+    }
+
     std::string text((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
     Lexer lexer(text);
     auto tokens = lexer.tokenize();
-    printTokens(tokens);
+    printTokenToFile(tokens, outputFile);
 
     return 0;
 }
