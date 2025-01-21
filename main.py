@@ -167,7 +167,7 @@ class Lexer:
             self.advance()
 
         if not all(char.isalnum() or char == "_" for char in result) or \
-                not re.match(r"^[a-zA-Zа-яА-Я_][a-zA-Zа-яА-Я0-9_]*$", result):
+                not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", result):
             return Token(Lexeme.BAD, result, start)
 
         keywords = {
