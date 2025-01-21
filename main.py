@@ -107,10 +107,8 @@ class Lexer:
         result = ""
         is_float = False
         is_invalid = False
-        is_point = True
 
         while self.current_char.isdigit():
-            is_point = False
             result += self.current_char
             self.advance()
 
@@ -118,14 +116,9 @@ class Lexer:
             is_float = True
             result += self.current_char
             self.advance()
-            print(self.current_char)
 
-            if not self.current_char.isdigit() and not self.current_char in "eE" or self.current_char.isspace():
+            if not self.current_char.isdigit():
                 is_invalid = True
-
-            if is_point and not self.current_char.isdigit():
-                print(self.current_char)
-                return Token(Lexeme.DOT, result, start)
 
             while self.current_char.isdigit():
                 result += self.current_char
@@ -216,7 +209,7 @@ class Lexer:
           '/': Lexeme.DIVIDE, ';': Lexeme.SEMICOLON, ',': Lexeme.COMMA,
           '(': Lexeme.LEFT_PAREN, ')': Lexeme.RIGHT_PAREN,
           '[': Lexeme.LEFT_BRACKET, ']': Lexeme.RIGHT_BRACKET,
-          '=': Lexeme.EQ,
+          '=': Lexeme.EQ, '.': Lexeme.DOT,
         }
 
         if ch in operators:
@@ -251,7 +244,7 @@ class Lexer:
                 self.skip_whitespace()
                 continue
 
-            if self.current_char.isdigit() or self.current_char == ".":
+            if self.current_char.isdigit():
                 return self.number()
 
             if self.current_char.isalpha() or self.current_char == "_":

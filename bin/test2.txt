@@ -1,0 +1,12 @@
+program example;
+var
+  x1 1x xы _x x_ xфx x_1x x_ъ_x
+  2312 1231.1123 25.25.25 0. 0.e-20 .0e-20
+  x: integer;
+  str: array[1..10] of integer;
+begin
+  // Initialize x
+  x := 42;
+  {This is a block comment}
+  str[1] := x + 3.14
+end.

@@ -124,13 +124,11 @@ private:
             advance();
         }
 
-        // Обработка первой точки
         if (currentChar == '.') {
             isFloat = true;
             result += currentChar;
             advance();
 
-            // Проверяем, что после точки есть цифры
             if (!std::isdigit(currentChar)) {
                 isInvalid = true;
             }
@@ -141,7 +139,6 @@ private:
             }
         }
 
-        // Проверка на наличие второй точки
         if (currentChar == '.') {
             isInvalid = true;
             while (currentChar == '.' || std::isdigit(currentChar)) {
@@ -150,19 +147,16 @@ private:
             }
         }
 
-        // Обработка экспоненты
         if ((currentChar == 'e' || currentChar == 'E') && !isInvalid) {
             isFloat = true;
             result += currentChar;
             advance();
 
-            // Проверяем знак экспоненты
             if (currentChar == '+' || currentChar == '-') {
                 result += currentChar;
                 advance();
             }
 
-            // Проверяем, что за знаком или 'e' идут цифры
             if (!std::isdigit(currentChar)) {
                 isInvalid = true;
             }
@@ -173,17 +167,21 @@ private:
             }
         }
 
-        // Если токен некорректный, продолжаем считывать до разделителя
-        if (isInvalid) {
+        if (std::isalnum(currentChar) || currentChar == '_') {
+            isInvalid = true;
             while (!std::isspace(currentChar) && currentChar != '\0') {
                 result += currentChar;
                 advance();
             }
+        }
+
+        if (isInvalid) {
             return {Lexeme::BAD, result, start};
         }
 
         return {isFloat ? Lexeme::FLOAT : Lexeme::INTEGER, result, start};
     }
+
 
 
     Token identifier() {
