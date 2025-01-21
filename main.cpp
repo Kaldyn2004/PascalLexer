@@ -394,13 +394,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::ifstream inputFile(argv[1]);
+    std::ifstream inputFile(argv[1], std::ios::binary);
     if (!inputFile) {
         std::cerr << "Error: Cannot open file " << argv[1] << std::endl;
         return 1;
     }
 
-    std::ofstream outputFile(argv[2]);
+    std::ofstream outputFile(argv[2], std::ios::binary);
     if (!inputFile) {
         std::cerr << "Error: Cannot open file " << argv[2] << std::endl;
         return 1;
