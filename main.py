@@ -166,7 +166,7 @@ class Lexer:
         }
 
         if len(result) > 255:  # Проверка длины строки
-            return Token(Lexeme.BED, result, start)
+            return Token(Lexeme.BAD, result, start)
 
         return Token(keywords.get(result, Lexeme.IDENTIFIER), result, start)
 
