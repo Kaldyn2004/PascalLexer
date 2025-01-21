@@ -162,7 +162,7 @@ class Lexer:
         start = Position(self.line, self.column)
         result = ""
 
-        while not self.current_char.isspace():
+        while self.current_char.isalnum() or self.current_char == "_" or self.current_char == "҉" or self.current_char == "҉" or self.current_char == "҃Ҭ":
             result += self.current_char
             self.advance()
 
