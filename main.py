@@ -192,22 +192,23 @@ class Lexer:
         ch = self.current_char
         self.advance()
 
-    # Операторы и знаки препинания
         operators = {
            '*': Lexeme.MULTIPLICATION, '+': Lexeme.PLUS, '-': Lexeme.MINUS,
           '/': Lexeme.DIVIDE, ';': Lexeme.SEMICOLON, ',': Lexeme.COMMA,
           '(': Lexeme.LEFT_PAREN, ')': Lexeme.RIGHT_PAREN,
           '[': Lexeme.LEFT_BRACKET, ']': Lexeme.RIGHT_BRACKET,
-          '=': Lexeme.EQ, '.': Lexeme.DOT, ':': Lexeme.COLON
+          '=': Lexeme.EQ, '.': Lexeme.DOT,
         }
 
-    # Если это один из стандартных операторов
         if ch in operators:
             return Token(operators[ch], ch, start)
 
-    # Сравнение '>', '<', '>=', '<=', '<>'
         if ch == '>':
-            return Token(Lexeme.GREATER_EQ, ">=", start) if self.current_char == "=" else Token(Lexeme.GREATER, ">", start)
+             if self.current_char == '=':
+                 self.advance()
+                 return Token(Lexeme.GREATER_EQ, ">=", start)
+
+             return Token(Lexeme.GREATER, "=", start)
         if ch == '<':
             if self.current_char == "=":
                 self.advance()
@@ -217,10 +218,11 @@ class Lexer:
                 return Token(Lexeme.NOT_EQ, "<>", start)
             return Token(Lexeme.LESS, "<", start)
 
-    # Обработка двоеточия для присваивания ':='
-        if ch == ':' and self.current_char == "=":
-            self.advance()
-            return Token(Lexeme.ASSIGN, ":=", start)
+        if ch == ':':
+            if self.current_char == "=":
+                self.advance()
+                return Token(Lexeme.ASSIGN, ":=", start)
+            return Token( Lexeme.COLON, ":", start)
 
         return Token(Lexeme.BAD, ch, start)
 
