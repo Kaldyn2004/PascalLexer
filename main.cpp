@@ -229,8 +229,8 @@ private:
         }
 
         if (currentChar == '\'') {
-            advance();
             result += currentChar;
+            advance();
             return {Lexeme::STRING, result, start};
         }
 
