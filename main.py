@@ -208,7 +208,7 @@ class Lexer:
                  self.advance()
                  return Token(Lexeme.GREATER_EQ, ">=", start)
 
-             return Token(Lexeme.GREATER, "=", start)
+             return Token(Lexeme.GREATER, ">", start)
         if ch == '<':
             if self.current_char == "=":
                 self.advance()
@@ -222,7 +222,7 @@ class Lexer:
             if self.current_char == "=":
                 self.advance()
                 return Token(Lexeme.ASSIGN, ":=", start)
-            return Token( Lexeme.COLON, ":", start)
+            return Token(Lexeme.COLON, ":", start)
 
         return Token(Lexeme.BAD, ch, start)
 
