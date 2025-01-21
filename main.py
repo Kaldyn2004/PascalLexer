@@ -121,11 +121,9 @@ class Lexer:
             print(self.current_char)
 
             if not self.current_char.isdigit() and not self.current_char in "eE" or self.current_char.isspace():
-                if not self.current_char.isspace():
-                    is_point = False
                 is_invalid = True
 
-            if is_point and (self.current_char == ' ' or self.current_char == ''):
+            if is_point and not self.current_char.isdigit() and not self.current_char in "eE":
                 print(self.current_char)
                 return Token(Lexeme.DOT, result, start)
 
