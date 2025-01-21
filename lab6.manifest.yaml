@@ -1,3 +1,2 @@
-dispatcher: cmake
-makeHome: .
-target: PascalLexer
+dispatcher: python3.13
+script: main.py
