@@ -196,6 +196,7 @@ private:
 
             if (result.length() > 255) {
                 while (std::isalnum(currentChar) || currentChar == '_') {
+                    result += currentChar;
                     advance();
                 }
                 return {Lexeme::BAD, result, start};
@@ -309,7 +310,6 @@ public:
                 return nextToken();
             }
 
-            // Пропуск многострочных комментариев
             if (currentChar == '{') {
                 if (!skipBlockComment()) {
                     return {Lexeme::BAD, "{", {line, column}};
