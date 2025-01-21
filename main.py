@@ -145,14 +145,18 @@ class Lexer:
             while self.current_char.isdigit():
                 result += self.current_char
                 self.advance()
-
-        if is_invalid:
-            while not self.current_char.isspace() and self.current_char:
+        
+        if self.current_char.isalnum() or self.current_char == "_":
+            is_invalid = True
+            while self.current_char and not self.current_char.isspace() and self.current_char not in ";,:)]}":
                 result += self.current_char
                 self.advance()
+
+        if is_invalid:
             return Token(Lexeme.BAD, result, start)
 
         return Token(Lexeme.FLOAT if is_float else Lexeme.INTEGER, result, start)
+
 
     def identifier(self):
         start = Position(self.line, self.column)
