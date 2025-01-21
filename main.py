@@ -85,17 +85,21 @@ class Lexer:
 
     def skip_block_comment(self):
         start_position = Position(self.line, self.column)
+        result = "{"
         self.advance()
         while self.current_char:
             if self.current_char == "}" and self.peek() == "":
+                result += self.current_char
                 self.advance()
                 return None
             elif self.current_char == "}" and self.peek() != "":
+                result += self.current_char
                 self.advance()
                 break
+            result += self.current_char
             self.advance()
         else:
-            return Token(Lexeme.BAD, "Unclosed block comment", start_position)
+            return Token(Lexeme.BAD, result, start_position)
         return None
 
     def number(self):
