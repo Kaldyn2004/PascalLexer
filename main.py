@@ -189,30 +189,40 @@ class Lexer:
 
     def operator_or_punctuation(self):
         start = Position(self.line, self.column)
-        char = self.current_char
+        ch = self.current_char
         self.advance()
 
+    # Операторы и знаки препинания
         operators = {
-            '*': Lexeme.MULTIPLICATION, '+': Lexeme.PLUS, '-': Lexeme.MINUS,
-            '/': Lexeme.DIVIDE, ';': Lexeme.SEMICOLON, ',': Lexeme.COMMA,
-            '(': Lexeme.LEFT_PAREN, ')': Lexeme.RIGHT_PAREN,
-            '[': Lexeme.LEFT_BRACKET, ']': Lexeme.RIGHT_BRACKET,
-            '=': Lexeme.EQ, '>': Lexeme.GREATER, '<': Lexeme.LESS,
-            ':': Lexeme.COLON, '.': Lexeme.DOT
+           '*': Lexeme.MULTIPLICATION, '+': Lexeme.PLUS, '-': Lexeme.MINUS,
+          '/': Lexeme.DIVIDE, ';': Lexeme.SEMICOLON, ',': Lexeme.COMMA,
+          '(': Lexeme.LEFT_PAREN, ')': Lexeme.RIGHT_PAREN,
+          '[': Lexeme.LEFT_BRACKET, ']': Lexeme.RIGHT_BRACKET,
+          '=': Lexeme.EQ, '.': Lexeme.DOT, ':': Lexeme.COLON
         }
 
-        # Обработка новых сравнений
-        if char == ">" and self.current_char == "=":
-            self.advance()
-            return Token(Lexeme.GREATER_EQ, "=>", start)
-        if char == "<" and self.current_char == ">":
-            self.advance()
-            return Token(Lexeme.NOT_EQ, "<>", start)
+    # Если это один из стандартных операторов
+        if ch in operators:
+            return Token(operators[ch], ch, start)
 
-        if char in operators:
-            return Token(operators[char], char, start)
+    # Сравнение '>', '<', '>=', '<=', '<>'
+        if ch == '>':
+            return Token(Lexeme.GREATER_EQ, ">=", start) if self.current_char == "=" else Token(Lexeme.GREATER, ">", start)
+        if ch == '<':
+            if self.current_char == "=":
+                self.advance()
+                return Token(Lexeme.LESS_EQ, "<=", start)
+            elif self.current_char == ">":
+                self.advance()
+                return Token(Lexeme.NOT_EQ, "<>", start)
+            return Token(Lexeme.LESS, "<", start)
 
-        return Token(Lexeme.BAD, char, start)
+    # Обработка двоеточия для присваивания ':='
+        if ch == ':' and self.current_char == "=":
+            self.advance()
+            return Token(Lexeme.ASSIGN, ":=", start)
+
+        return Token(Lexeme.BAD, ch, start)
 
     def next_token(self):
         while self.current_char:
