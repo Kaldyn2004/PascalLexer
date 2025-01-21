@@ -117,43 +117,22 @@ private:
         Position start = {line, column};
         std::string result;
         bool isFloat = false;
-        bool hasExponent = false;
-        bool hasExponentSign = false;
+        bool isInvalid = false;
 
         while (std::isdigit(currentChar)) {
             result += currentChar;
             advance();
         }
 
+        // Обработка первой точки
         if (currentChar == '.') {
-            result += currentChar;
-            isFloat = true;
-
-            if (!std::isdigit(currentChar)) {
-                return {Lexeme::BAD, result, start};
-            }
-
-            while (std::isdigit(currentChar)) {
-                result += currentChar;
-                advance();
-            }
-        }
-
-        if (currentChar == 'e' || currentChar == 'E') {
             isFloat = true;
             result += currentChar;
             advance();
-            hasExponent = true;
 
-            if (currentChar == '+' || currentChar == '-') {
-                result += currentChar;
-                advance();
-                hasExponentSign = true;
-            }
-
+            // Проверяем, что после точки есть цифры
             if (!std::isdigit(currentChar)) {
-                // Если после экспоненты нет цифр, возвращаем BAD
-                return {Lexeme::BAD, result, start};
+                isInvalid = true;
             }
 
             while (std::isdigit(currentChar)) {
@@ -162,24 +141,50 @@ private:
             }
         }
 
-        // Проверка на несколько точек
-        if (isFloat && std::count(result.begin(), result.end(), '.') > 1) {
-            return {Lexeme::BAD, result, start};
+        // Проверка на наличие второй точки
+        if (currentChar == '.') {
+            isInvalid = true;
+            while (currentChar == '.' || std::isdigit(currentChar)) {
+                result += currentChar;
+                advance();
+            }
         }
 
-        // Проверка на корректность экспоненты
-        if (hasExponent) {
-            size_t ePos = result.find_first_of("eE");
-            if (ePos != std::string::npos) {
-                std::string exponent = result.substr(ePos + 1);
-                if (exponent.empty() || (!std::isdigit(exponent[0]) && !(exponent[0] == '+' || exponent[0] == '-'))) {
-                    return {Lexeme::BAD, result, start};
-                }
+        // Обработка экспоненты
+        if ((currentChar == 'e' || currentChar == 'E') && !isInvalid) {
+            isFloat = true;
+            result += currentChar;
+            advance();
+
+            // Проверяем знак экспоненты
+            if (currentChar == '+' || currentChar == '-') {
+                result += currentChar;
+                advance();
             }
+
+            // Проверяем, что за знаком или 'e' идут цифры
+            if (!std::isdigit(currentChar)) {
+                isInvalid = true;
+            }
+
+            while (std::isdigit(currentChar)) {
+                result += currentChar;
+                advance();
+            }
+        }
+
+        // Если токен некорректный, продолжаем считывать до разделителя
+        if (isInvalid) {
+            while (!std::isspace(currentChar) && currentChar != '\0') {
+                result += currentChar;
+                advance();
+            }
+            return {Lexeme::BAD, result, start};
         }
 
         return {isFloat ? Lexeme::FLOAT : Lexeme::INTEGER, result, start};
     }
+
 
     Token identifier() {
         Position start = {line, column};
