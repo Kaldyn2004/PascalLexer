@@ -145,7 +145,7 @@ class Lexer:
             while self.current_char.isdigit():
                 result += self.current_char
                 self.advance()
-        
+
         if self.current_char.isalnum() or self.current_char == "_":
             is_invalid = True
             while self.current_char and not self.current_char.isspace() and self.current_char not in ";,:)]}":
@@ -162,7 +162,7 @@ class Lexer:
         start = Position(self.line, self.column)
         result = ""
 
-        while self.current_char.isalnum() or self.current_char == "_":
+        while self.current_char.isalnum() or self.current_char == "_" or self.current_char == "҉":
             result += self.current_char
             self.advance()
 
