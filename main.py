@@ -165,11 +165,15 @@ class Lexer:
             "THEN": Lexeme.THEN, "TYPE": Lexeme.TYPE, "VAR": Lexeme.VAR
         }
 
+        if len(result) > 255:  # Проверка длины строки
+            return Token(Lexeme.BED, result, start)
+
         return Token(keywords.get(result, Lexeme.IDENTIFIER), result, start)
 
     def string_literal(self):
         start = Position(self.line, self.column)
         result = ""
+        result += self.current_char
         self.advance()
 
         while self.current_char != "'" and self.current_char != "\n" and self.current_char:
@@ -177,6 +181,7 @@ class Lexer:
             self.advance()
 
         if self.current_char == "'":
+            result += self.current_char
             self.advance()
             return Token(Lexeme.STRING, result, start)
 
@@ -195,6 +200,14 @@ class Lexer:
             '=': Lexeme.EQ, '>': Lexeme.GREATER, '<': Lexeme.LESS,
             ':': Lexeme.COLON, '.': Lexeme.DOT
         }
+
+        # Обработка новых сравнений
+        if char == ">" and self.current_char == "=":
+            self.advance()
+            return Token(Lexeme.GREATER_EQ, "=>", start)
+        if char == "<" and self.current_char == ">":
+            self.advance()
+            return Token(Lexeme.NOT_EQ, "<>", start)
 
         if char in operators:
             return Token(operators[char], char, start)
