@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cctype>
+#include <algorithm>
 
 enum class Lexeme {
     ARRAY,
@@ -65,14 +66,14 @@ private:
     size_t pos = 0;
     char currentChar = '\0';
     int line = 1;
-    int column = 0;
+    int column = 1;
 
     std::unordered_map<std::string, int> identifierStats;
 
     void advance() {
         if (currentChar == '\n') {
             line++;
-            column = 0;
+            column = 1;
         } else {
             column++;
         }
@@ -116,6 +117,8 @@ private:
         Position start = {line, column};
         std::string result;
         bool isFloat = false;
+        bool hasExponent = false;
+        bool hasExponentSign = false;
 
         while (std::isdigit(currentChar)) {
             result += currentChar;
@@ -124,7 +127,6 @@ private:
 
         if (currentChar == '.') {
             result += currentChar;
-            advance();
             isFloat = true;
 
             if (!std::isdigit(currentChar)) {
@@ -135,27 +137,45 @@ private:
                 result += currentChar;
                 advance();
             }
-
-            if (currentChar == 'e' || currentChar == 'E') {
-                result += currentChar;
-                advance();
-                if (currentChar == '+' || currentChar == '-') {
-                    result += currentChar;
-                    advance();
-                }
-                if (!std::isdigit(currentChar)) {
-                    return {Lexeme::BAD, result, start};
-                }
-                while (std::isdigit(currentChar)) {
-                    result += currentChar;
-                    advance();
-                }
-            }
-            return {Lexeme::FLOAT, result, start};
         }
 
-        if (result.size() > 16) {
+        if (currentChar == 'e' || currentChar == 'E') {
+            isFloat = true;
+            result += currentChar;
+            advance();
+            hasExponent = true;
+
+            if (currentChar == '+' || currentChar == '-') {
+                result += currentChar;
+                advance();
+                hasExponentSign = true;
+            }
+
+            if (!std::isdigit(currentChar)) {
+                // Если после экспоненты нет цифр, возвращаем BAD
+                return {Lexeme::BAD, result, start};
+            }
+
+            while (std::isdigit(currentChar)) {
+                result += currentChar;
+                advance();
+            }
+        }
+
+        // Проверка на несколько точек
+        if (isFloat && std::count(result.begin(), result.end(), '.') > 1) {
             return {Lexeme::BAD, result, start};
+        }
+
+        // Проверка на корректность экспоненты
+        if (hasExponent) {
+            size_t ePos = result.find_first_of("eE");
+            if (ePos != std::string::npos) {
+                std::string exponent = result.substr(ePos + 1);
+                if (exponent.empty() || (!std::isdigit(exponent[0]) && !(exponent[0] == '+' || exponent[0] == '-'))) {
+                    return {Lexeme::BAD, result, start};
+                }
+            }
         }
 
         return {isFloat ? Lexeme::FLOAT : Lexeme::INTEGER, result, start};
