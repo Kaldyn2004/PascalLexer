@@ -158,6 +158,10 @@ class Lexer:
             result += self.current_char
             self.advance()
 
+        if not all(char.isalnum() or char == "_" for char in result) or \
+                not re.match(r"^[a-zA-Zа-яА-Я_][a-zA-Zа-яА-Я0-9_]*$", result):
+            return Token(Lexeme.BAD, result, start)
+
         keywords = {
             "ARRAY": Lexeme.ARRAY, "BEGIN": Lexeme.BEGIN, "ELSE": Lexeme.ELSE,
             "END": Lexeme.END, "IF": Lexeme.IF, "OF": Lexeme.OF,
@@ -165,7 +169,7 @@ class Lexer:
             "THEN": Lexeme.THEN, "TYPE": Lexeme.TYPE, "VAR": Lexeme.VAR
         }
 
-        if len(result) > 255:  # Проверка длины строки
+        if len(result) > 256:
             return Token(Lexeme.BAD, result, start)
 
         return Token(keywords.get(result, Lexeme.IDENTIFIER), result, start)
