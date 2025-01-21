@@ -193,6 +193,13 @@ private:
         while (std::isalnum(currentChar) || currentChar == '_') {
             result += currentChar;
             advance();
+
+            if (result.length() > 255) {
+                while (std::isalnum(currentChar) || currentChar == '_') {
+                    advance();
+                }
+                return {Lexeme::BAD, result, start};
+            }
         }
 
         static const std::unordered_map<std::string, Lexeme> keywords = {
@@ -213,6 +220,7 @@ private:
     Token stringLiteral() {
         Position start = {line, column};
         std::string result;
+        result += currentChar;
         advance();
 
         while (currentChar != '\'' && currentChar != '\n' && currentChar != '\0') {
@@ -222,6 +230,7 @@ private:
 
         if (currentChar == '\'') {
             advance();
+            result += currentChar;
             return {Lexeme::STRING, result, start};
         }
 
